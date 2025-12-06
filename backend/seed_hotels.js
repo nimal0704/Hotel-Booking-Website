@@ -1,7 +1,7 @@
+require("dotenv").config();
 const mongoose = require('mongoose');
 
-// Make sure this is your correct connection string
-const MONGO_URI = 'mongodb://127.0.0.1:27017/myHotelBookingApp';
+
 
 // Make sure this path to your updated Hotel model is correct
 const Hotel = require('./models/Hotel'); 
@@ -198,7 +198,7 @@ const hotels = [
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB connected for seeding hotels.');
 
     // Delete all existing hotels to start fresh
