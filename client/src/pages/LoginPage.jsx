@@ -19,6 +19,8 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   const handleClose = () => {
     setIsOpen(false);
     // Reset fields on close
@@ -30,7 +32,7 @@ function LoginPage() {
   const handleSignIn = async (e) => {
     e.preventDefault(); // Prevent form submission
     try {
-      const response = await fetch('http://localhost:3000/users/login', {
+      const response = await fetch(`${BASE_URL}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -53,7 +55,7 @@ function LoginPage() {
   const handleSignUp = async (e) => {
     e.preventDefault(); // Prevent form submission
     try {
-      const response = await fetch('http://localhost:3000/users/register', {
+      const response = await fetch(`${BASE_URL}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, email, password }),

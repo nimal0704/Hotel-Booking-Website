@@ -35,6 +35,9 @@ function SearchResultsPage() {
     const checkout = searchParams.get('checkout');
     const activity = searchParams.get('option');
 
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+
     const handleFilterChange = (filterName) => {
         setFilters(prevFilters => ({
             ...prevFilters,
@@ -55,13 +58,13 @@ function SearchResultsPage() {
                 let response;
 
                 if (type === 'hotel') {
-                    response = await fetch(`http://localhost:3000/hotels?location=${location}&checkin=${checkin}&checkout=${checkout}`);
+                    response = await fetch(`${BASE_URL}/hotels?location=${location}&checkin=${checkin}&checkout=${checkout}`);
                 } else if (type === 'adventure') {
                     if (activity) {
-                        response = await fetch(`http://localhost:3000/adventures?option=${activity}&location=${location}`);
+                        response = await fetch(`${BASE_URL}/adventures?option=${activity}&location=${location}`);
                     }
                 } else if (type === 'packages') {
-                    response = await fetch(`http://localhost:3000/packages?location=${location}`);
+                    response = await fetch(`${BASE_URL}/packages?location=${location}`);
                 }
 
                 if (!response) {

@@ -29,13 +29,15 @@ function DetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
   // Your existing data-fetching logic is perfect.
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         // We need to pass checkin/checkout to get the availableRooms back from the API
-        const endpoint = `http://localhost:3000/hotels/${id}?checkin=${checkin}&checkout=${checkout}`;
+        const endpoint = `${BASE_URL}/hotels/${id}?checkin=${checkin}&checkout=${checkout}`;
         const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error('Item not found or network response was not ok');
