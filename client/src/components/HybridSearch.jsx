@@ -170,7 +170,7 @@ const TripSearchForm = () => {
 
 
 function HybridSearch() {
-  const [activeTab, setActiveTab] = React.useState('adventures');
+  const [activeTab, setActiveTab] = React.useState('hotels');
 
   return (
     <Card className="w-full max-w-4xl mx-auto rounded-xl shadow-lg border-slate-200">

@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
+const baseURL = process.env.VITE_BACKEND_URL || 'http://localhost:3000';
+
 // The component now accepts props to control its visibility
 function LoginModal({ isOpen, onClose }) {
   const { login } = useAuth();
@@ -29,9 +31,9 @@ function LoginModal({ isOpen, onClose }) {
   // Your handleSignIn and handleSignUp functions remain exactly the same,
   // except they will call the new handleClose() function on success.
   const handleSignIn = async (e) => {
-    e.preventDefault();
+     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/users/login', {
+      const response = await fetch(`${baseURL}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -51,9 +53,9 @@ function LoginModal({ isOpen, onClose }) {
   };
 
   const handleSignUp = async (e) => {
-    e.preventDefault();
+     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/users/register', {
+      const response = await fetch(`${baseURL}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, email, password }),});
@@ -92,7 +94,7 @@ function LoginModal({ isOpen, onClose }) {
                                         <CardContent className="space-y-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="signin-email">Email</Label>
-                                                <Input id="signin-email" type="email" placeholder="nimal@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                                                <Input id="signin-email" type="email" placeholder="enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="signin-password">Password</Label>
@@ -114,18 +116,18 @@ function LoginModal({ isOpen, onClose }) {
               </CardHeader><CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-fullname">Full Name</Label>
-                    <Input id="signup-fullname" placeholder="Nimal Krishna" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                    <Input id="signup-fullname" placeholder="enter your name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
-                    <Input id="signup-email" type="email" placeholder="nimal@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <Input id="signup-email" type="email" placeholder="enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>
                     <Input id="signup-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   </div>
                 </CardContent><DialogFooter>
-                  <Button type="submit" className="w-full">Create Account</Button>
+                  <Button onClick={handleSignUp} type="submit" className="w-full">Create Account</Button>
                 </DialogFooter>
                 </Card>
             </TabsContent>

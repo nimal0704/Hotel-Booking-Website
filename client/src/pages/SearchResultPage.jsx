@@ -45,6 +45,9 @@ function SearchResultsPage() {
         }));
     };
 
+    console.log("BASE_URL:", BASE_URL);
+
+
     useEffect(() => {
         const fetchData = async () => {
             if (!type || !location) {
