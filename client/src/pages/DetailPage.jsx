@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
-import { LoginModalProvider, useLoginModal } from '@/context/LoginModalContext';
+import { useLoginModal } from '@/context/LoginModalContext';
+
 
 // --- Shadcn UI Component Imports ---
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Separator } from '@/components/ui/separator';
 
 // --- Icons (using Lucide React) ---
-import { Wifi, BedDouble, Users, Star, MapPin } from 'lucide-react';
+import { Wifi, BedDouble, Users, MapPin } from 'lucide-react';
 
 function DetailPage() {
   const { id } = useParams(); 

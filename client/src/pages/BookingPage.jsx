@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-
+const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 // --- Shadcn UI Component Imports ---
 import { Button } from "@/components/ui/button";
@@ -54,12 +54,13 @@ function BookingPage (){
       }
       try{
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/hotels/${id}/rooms/${roomId}/availability?checkin=${checkin}&checkout=${checkout}`);
+        const response = await fetch(`${baseUrl}/hotels/${id}/rooms/${roomId}/availability?checkin=${checkin}&checkout=${checkout}`);
         const data = await response.json();
+        console.log("Availability API response:", data);
         setItem(data);
       }catch (err) { // Use a different name like 'err' to avoid confusion
         console.error('Error fetching item data:', err);
-        setError(err.message); // Set the error state
+        setError(err.message || "Failed to fetch data"); // Set the error state
       }finally{
         setLoading(false);
       }
@@ -68,7 +69,11 @@ function BookingPage (){
 
   },[navigate,id,type,user,roomId,checkout,checkin]);
 
-  // In BookingPage.jsx
+    const price = item?.price || item?.totalPrice || 0;
+    const tax = price * 0.12;
+    const finalPrice = price + tax;
+
+     // In BookingPage.jsx
 
 const handleConfirmBooking = async (e) => {
     e.preventDefault();
@@ -77,6 +82,7 @@ const handleConfirmBooking = async (e) => {
     const checkinDate = new Date(checkin);
     const checkoutDate = new Date(checkout);
     const numberOfNights = (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24);
+
 
     const bookingDetails = {
         userId: user.userId, // Assumes your user object has an _id
@@ -90,7 +96,7 @@ const handleConfirmBooking = async (e) => {
     };
 
     try {
-        const response = await fetch('http://localhost:3000/bookings', {
+        const response = await fetch(`${baseUrl}/bookings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,9 +133,6 @@ const handleConfirmBooking = async (e) => {
             </div>
         );
   }
-  const price = item.price || item.totalPrice || 0;
-  const tax = price * 0.12;
-  const finalPrice = price + tax;
 
 
 
@@ -141,7 +144,8 @@ return (
                     
                     {/* Left Column: Form (takes up 2 of 3 columns on large screens) */}
                     <div className="lg:col-span-2">
-                        <Card as="form" onSubmit={handleConfirmBooking} className="border-none shadow-none bg-transparent">
+                        <form onSubmit={handleConfirmBooking}>
+                            <Card className="border-none shadow-none bg-transparent">
                             <CardHeader>
                                 <CardTitle className="text-3xl font-bold">Secure booking</CardTitle>
                             </CardHeader>
@@ -200,11 +204,12 @@ return (
                                 </div>
                             </CardContent>
                             <CardFooter>
-                                <Button type="submit" size="lg" className="w-full h-12 text-lg" onClick={handleConfirmBooking}>
+                                <Button type="submit" size="lg" className="w-full h-12 text-lg">
                                     Complete Booking (Dummy)
                                 </Button>
                             </CardFooter>
                         </Card>
+                        </form>
                     </div>
 
                     {/* Right Column: Summary Card (takes up 1 of 3 columns on large screens) */}
@@ -212,12 +217,12 @@ return (
                         <Card className="sticky top-8">
                             <CardHeader>
                                 <img
-                                    src={item.imageUrl || `https://placehold.co/600x400?text=${item.name || item.title || item.packageName}`}
-                                    alt={item.name || item.title || item.packageName}
+                                    src={item?.imageUrl || `https://placehold.co/600x400?text=${item?.name || item?.title || item?.packageName}`}
+                                    alt={item?.name || item?.title || item?.packageName}
                                     className="rounded-lg mb-4"
                                 />
-                                <CardTitle>{item.name || item.title || item.packageName}</CardTitle>
-                                <CardDescription className="capitalize">{item.location}</CardDescription>
+                                <CardTitle>{item?.name || item?.title || item?.packageName}</CardTitle>
+                                <CardDescription className="capitalize">{item?.location}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <Separator />

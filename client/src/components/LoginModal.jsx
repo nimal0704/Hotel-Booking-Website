@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-const baseURL = process.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 // The component now accepts props to control its visibility
 function LoginModal({ isOpen, onClose }) {
@@ -30,27 +30,31 @@ function LoginModal({ isOpen, onClose }) {
   
   // Your handleSignIn and handleSignUp functions remain exactly the same,
   // except they will call the new handleClose() function on success.
-  const handleSignIn = async (e) => {
-     e.preventDefault();
-    try {
-      const response = await fetch(`${baseURL}/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        alert(data.message);
-        return;
-      }
-      login(data.token);
-      alert('You are logged in!');
-      handleClose(); // Use the new close handler
-    } catch (error) {
-      console.error('Login failed:', error);
-      alert('Login failed. Please try again.');
+ const handleSignIn = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(`${baseURL}/users/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || "Login failed");
     }
-  };
+
+    const data = await response.json();
+    login(data.token);
+    alert("You are logged in!");
+    handleClose();
+
+  } catch (error) {
+    console.error("Login failed:", error);
+    alert(error.message);
+  }
+};
 
   const handleSignUp = async (e) => {
      e.preventDefault();
@@ -84,7 +88,8 @@ function LoginModal({ isOpen, onClose }) {
                 <TabsTrigger value="signup">Create Account</TabsTrigger>
             </TabsList>
             <TabsContent value="signin">
-                <Card as="form" onSubmit={handleSignIn} className="border-none shadow-none">
+              <form onSubmit={handleSignIn}>
+                  <Card className="border-none shadow-none">
                                         <CardHeader>
                                             <DialogTitle>Welcome back</DialogTitle>
                                             <DialogDescription>
@@ -102,18 +107,22 @@ function LoginModal({ isOpen, onClose }) {
                                             </div>
                                         </CardContent>
                                         <DialogFooter>
-                                            <Button type="submit" className="w-full" onClick={handleSignIn}>Sign In</Button>
+                                            <Button type="submit" className="w-full">Sign In</Button>
                                         </DialogFooter>
                 </Card>
+              </form>
+
+
             </TabsContent>
             <TabsContent value="signup">
-                <Card as="form" onSubmit={handleSignUp} className="border-none shadow-none">
+              <form onSubmit={handleSignUp}>
+                   <Card className="border-none shadow-none">
                    <CardHeader>
                 <DialogTitle>Create your account</DialogTitle>
                 <DialogDescription>
                   It's quick and easy. Let's get you started.
                 </DialogDescription>
-              </CardHeader><CardContent className="space-y-4">
+               </CardHeader><CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-fullname">Full Name</Label>
                     <Input id="signup-fullname" placeholder="enter your name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
@@ -127,9 +136,10 @@ function LoginModal({ isOpen, onClose }) {
                     <Input id="signup-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   </div>
                 </CardContent><DialogFooter>
-                  <Button onClick={handleSignUp} type="submit" className="w-full">Create Account</Button>
+                  <Button type="submit" className="w-full">Create Account</Button>
                 </DialogFooter>
                 </Card>
+              </form>
             </TabsContent>
           </Tabs>
       </DialogContent>

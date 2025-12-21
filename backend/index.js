@@ -149,47 +149,56 @@ app.get('/hotels/:id', async (req, res) => {
 // In server.js, UPDATE your existing availability route
 
 app.get('/hotels/:hotelId/rooms/:roomId/availability', async (req, res) => {
-    try {
-        // ... (getting params, finding hotel & room is the same)
-        const { hotelId, roomId } = req.params;
-        const { checkin, checkout } = req.query;
-        const userStartDate = new Date(checkin);
-        const userEndDate = new Date(checkout);
+  try {
+    const { hotelId, roomId } = req.params;
+    const { checkin, checkout } = req.query;
 
-        const hotel = await Hotel.findById(hotelId);
-        const room = hotel.rooms.find(r => r._id.toString() === roomId);
-        if (!room) return res.status(404).json({ message: "Room not found" });
+    const userStartDate = new Date(checkin);
+    const userEndDate = new Date(checkout);
 
-        // --- 👇 THE LOGIC CHANGE IS HERE 👇 ---
-        // Find all bookings for THIS room that conflict with the user's dates
-        const conflictingBookings = await Booking.countDocuments({
-            room: roomId,
-            $and: [
-                { checkinDate: { $lt: userEndDate } },
-                { checkoutDate: { $gt: userStartDate } }
-            ]
-        });
-        // --- 👆 END OF LOGIC CHANGE 👆 ---
-        
-        // ... (calculating price is the same)
-        const numberOfNights = (userEndDate - userStartDate) / (1000 * 60 * 60 * 24);
-        const totalPrice = room.price * numberOfNights;
-
-        if (conflictingBookings < room.roomCount) {
-            res.status(200).json({ 
-                available: true, 
-                price: totalPrice,
-                // also send back other details for the summary card
-                name: room.roomType,
-                location: hotel.location,
-                imageUrl: hotel.imageUrl
-            });
-        } else {
-            // ... (send unavailable response)
-        }
-    } catch (error) {
-        // ... (error handling)
+    const hotel = await Hotel.findById(hotelId);
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
     }
+
+    console.log("hotelId:", hotelId);
+    console.log("roomId:", roomId);
+    console.log("hotel rooms:", hotel.rooms.map(r => r._id.toString()));
+    
+    const room = hotel.rooms.id(roomId);
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
+    const conflictingBookings = await Booking.countDocuments({
+      roomId,
+      checkin: { $lt: userEndDate },
+      checkout: { $gt: userStartDate }
+    });
+
+    const numberOfNights =
+      (userEndDate - userStartDate) / (1000 * 60 * 60 * 24);
+
+    const totalPrice = room.price * numberOfNights;
+
+    if (conflictingBookings < room.roomCount) {
+      return res.status(200).json({
+        available: true,
+        price: totalPrice,
+        name: room.roomType,
+        location: hotel.location,
+        imageUrl: hotel.imageUrl
+      });
+    } else {
+      return res.status(200).json({
+        available: false,
+        message: "Room not available for selected dates"
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 // PATCH route to update an existing hotel by its ID
 app.patch('/hotels/:id', async (req, res) => {
