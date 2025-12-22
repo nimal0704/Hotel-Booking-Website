@@ -14,7 +14,7 @@ const cors = require('cors');
 const Booking = require('./models/Booking'); 
 const Review = require('./models/Review');
 
-
+const mongoUri = process.env.MONGO_URI
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,7 +24,7 @@ app.use(cors());
 app.use(express.json()); // 2. Add this line
 
 // --- Connect to MongoDB ---
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/myHotelBookingApp')
+mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connected successfully.'))
     .catch((err) => console.error('MongoDB connection error:', err));
 
@@ -164,7 +164,7 @@ app.get('/hotels/:hotelId/rooms/:roomId/availability', async (req, res) => {
     console.log("hotelId:", hotelId);
     console.log("roomId:", roomId);
     console.log("hotel rooms:", hotel.rooms.map(r => r._id.toString()));
-    
+
     const room = hotel.rooms.id(roomId);
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
