@@ -1,6 +1,6 @@
 // index.js
 
-require('dotenv').config();
+require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
 const Hotel = require('./models/Hotel'); // 1. Import the Hotel model
@@ -13,20 +13,26 @@ const authMiddleware = require('./middleware/authMiddleware');
 const cors = require('cors');
 const Booking = require('./models/Booking'); 
 const Review = require('./models/Review');
+const { connectDB } = require("./lib/db");
 
-const mongoUri = process.env.MONGO_URI
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON bodies
 app.use(cors());
-app.use(express.json()); // 2. Add this line
 
-// --- Connect to MongoDB ---
-mongoose.connect(mongoUri)
-    .then(() => console.log('MongoDB connected successfully.'))
-    .catch((err) => console.error('MongoDB connection error:', err));
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://hotel-booking-website-1-qw3y.onrender.com" // add later when deployed
+  ],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
+
+app.use(express.json()); // 2. Add this line
 
 // --- API ROUTES ---
 
@@ -171,7 +177,7 @@ app.get('/hotels/:hotelId/rooms/:roomId/availability', async (req, res) => {
     }
 
     const conflictingBookings = await Booking.countDocuments({
-      roomId,
+      room: roomId,
       checkin: { $lt: userEndDate },
       checkout: { $gt: userStartDate }
     });
@@ -570,6 +576,19 @@ app.delete('/reviews/:id', async (req, res) => {
 
 
 // --- Start the Server ---
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+
+const StartServer = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error("Error while connecting DB....", error);
+        process.exit(1);
+    }
+};
+
+StartServer();
+
+
