@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 
 // --- Icons (using Lucide React) ---
 import { Wifi, BedDouble, Users, MapPin } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 function DetailPage() {
   const { id } = useParams(); 
@@ -30,7 +31,7 @@ function DetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const BASE_URL = API_BASE_URL;
 
   // Your existing data-fetching logic is perfect.
   useEffect(() => {

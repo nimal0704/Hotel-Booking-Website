@@ -35,8 +35,7 @@ function SearchResultsPage() {
     const checkout = searchParams.get('checkout');
     const activity = searchParams.get('option');
 
-    const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
     const handleFilterChange = (filterName) => {
         setFilters(prevFilters => ({
@@ -44,9 +43,6 @@ function SearchResultsPage() {
             [filterName]: !prevFilters[filterName]
         }));
     };
-
-    console.log("BASE_URL:", BASE_URL);
-
 
     useEffect(() => {
         const fetchData = async () => {

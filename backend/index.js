@@ -79,30 +79,32 @@ app.get('/hotels', async (req, res) => {
             // Stage 2: Create a separate document for each room (same as before)
             { $unwind: "$rooms" },
 
-            // --- 👇 THE LOGIC CHANGE IS HERE 👇 ---
-            // Stage 3: Use $lookup to find conflicting bookings from the 'bookings' collection
+
+            // Stage 3: $lookup conflicting bookings — pass dates via let so pipeline can use them
             {
                 $lookup: {
-                    from: "bookings", // The name of your separate Booking collection
-                    let: { roomId: "$rooms._id" }, // Define a variable for the room's ID
+                    from: "bookings",
+                    let: {
+                        roomId: "$rooms._id",
+                        userStart: userStartDate,
+                        userEnd: userEndDate
+                    },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: ["$room", "$$roomId"] }, // Match bookings for this specific room
-                                        // Check for date conflicts
-                                        { $lt: ["$checkinDate", userEndDate] },
-                                        { $gt: ["$checkoutDate", userStartDate] }
+                                        { $eq: ["$room", "$$roomId"] },
+                                        { $lt: ["$checkinDate", "$$userEnd"] },
+                                        { $gt: ["$checkoutDate", "$$userStart"] }
                                     ]
                                 }
                             }
                         }
                     ],
-                    as: "conflictingBookings" // Store the array of conflicting bookings in this new field
+                    as: "conflictingBookings"
                 }
             },
-            // --- 👆 END OF LOGIC CHANGE 👆 ---
 
             // Stage 4: Add a field with the count of conflicting bookings
             {

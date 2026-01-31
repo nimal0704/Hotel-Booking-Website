@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '@/lib/api';
 
 // --- Shadcn UI Component Imports ---
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const BASE_URL = API_BASE_URL;
 
   const handleClose = () => {
     setIsOpen(false);

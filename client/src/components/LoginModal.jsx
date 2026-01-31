@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-const baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { API_BASE_URL } from '@/lib/api';
 
 // The component now accepts props to control its visibility
 function LoginModal({ isOpen, onClose }) {
@@ -34,7 +34,7 @@ function LoginModal({ isOpen, onClose }) {
   e.preventDefault();
 
   try {
-    const response = await fetch(`${baseURL}/users/login`, {
+    const response = await fetch(`${API_BASE_URL}/users/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -59,7 +59,7 @@ function LoginModal({ isOpen, onClose }) {
   const handleSignUp = async (e) => {
      e.preventDefault();
     try {
-      const response = await fetch(`${baseURL}/users/register`, {
+      const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, email, password }),});

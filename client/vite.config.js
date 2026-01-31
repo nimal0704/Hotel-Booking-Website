@@ -5,6 +5,7 @@ import { defineConfig } from "vite"
 
 // https://vite.dev/config/
 export default defineConfig({
+  envDir: '.', // load .env from client folder (where vite.config.js is)
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

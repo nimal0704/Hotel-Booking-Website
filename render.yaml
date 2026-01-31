@@ -1,0 +1,17 @@
+# Render Blueprint - Backend Web Service
+# Deploy: connect this repo in Render, then use this file or set options in Dashboard
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: hotel-booking-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false   # Add in Dashboard → Environment
+      - key: JWT_SECRET
+        sync: false   # Add in Dashboard → Environment

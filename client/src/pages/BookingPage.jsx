@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { API_BASE_URL } from '@/lib/api';
 
 // --- Shadcn UI Component Imports ---
 import { Button } from "@/components/ui/button";
@@ -96,7 +95,7 @@ const handleConfirmBooking = async (e) => {
     };
 
     try {
-        const response = await fetch(`${baseUrl}/bookings`, {
+        const response = await fetch(`${API_BASE_URL}/bookings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
